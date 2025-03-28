@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A História do Spring Boot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #6DB33F, #2F855A);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards 0.3s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background-color: #6DB33F;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            width: 50%;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.5s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            padding-right: 40px;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            padding-left: 40px;
+            transform: translateX(50px);
+        }
+
+        .timeline-item:nth-child(even).visible {
+            transform: translateX(0);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #6DB33F;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .timeline-item:nth-child(odd)::before {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -10px;
+        }
+
+        .year {
+            font-weight: bold;
+            color: #6DB33F;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .year:hover {
+            color: #2F855A;
+        }
+
+        h2 {
+            color: #2F855A;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            background-color: #E8F5E9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            padding: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .highlight.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            margin-top: 40px;
+        }
+
+        .nav-buttons {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .nav-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #6DB33F;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #2F855A;
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 30px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                left: 0 !important;
+                padding-left: 60px !important;
+                padding-right: 20px !important;
+            }
+
+            .timeline-item::before {
+                left: 20px !important;
+            }
+
+            .nav-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-bg"></div>
+        <div class="container header-content">
+            <h1>A História do Spring Boot</h1>
+            <p class="subtitle">Uma jornada pela evolução do framework</p>
+        </div>
+    </header>
+
+    <div class="nav-buttons">
+        <button class="nav-button" onclick="scrollToTop()">↑</button>
+        <button class="nav-button" onclick="scrollToBottom()">↓</button>
+    </div>
+
+    <div class="container">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="year">2002</div>
+                <h2>Fundação do Spring Framework</h2>
+                <p>Rod Johnson criou o Spring Framework como uma alternativa ao Enterprise JavaBeans (EJB). Isso lançou
+                    as bases para o que mais tarde se tornaria o Spring Boot.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2004</div>
+                <h2>Lançamento do Spring 1.0</h2>
+                <p>O primeiro lançamento oficial do Spring Framework, introduzindo recursos principais como injeção de
+                    dependência e programação orientada a aspectos.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2006</div>
+                <h2>Spring 2.0</h2>
+                <p>Introduziu suporte a namespaces XML e novos recursos como integração com AspectJ e gerenciamento de
+                    transações simplificado.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2009</div>
+                <h2>Spring 3.0</h2>
+                <p>Adicionou suporte a recursos do Java 5+, introduziu a Linguagem de Expressão do Spring (SpEL) e
+                    melhorou o suporte a REST.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2012</div>
+                <h2>Conceito do Spring Boot</h2>
+                <p>Mike Youngstrom propôs a ideia do Spring Boot em um ticket do JIRA, sugerindo uma maneira de criar
+                    aplicações Spring autônomas com configuração mínima.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2013</div>
+                <h2>Spring Boot 1.0</h2>
+                <p>Phil Webb e Dave Syer começaram a trabalhar no Spring Boot, e a primeira versão foi lançada em 2014.
+                    Esta versão introduziu a configuração automática e aplicações autônomas.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2014</div>
+                <h2>Spring Boot 1.1</h2>
+                <p>Adicionou suporte para templates Groovy, melhorou o tratamento de erros e introduziu o Spring Boot
+                    CLI.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2015</div>
+                <h2>Spring Boot 1.3</h2>
+                <p>Introduziu o Spring Boot DevTools para ciclos de desenvolvimento mais rápidos e melhor experiência do
+                    desenvolvedor.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2016</div>
+                <h2>Spring Boot 1.4</h2>
+                <p>Adicionou suporte ao Java 9, melhorou os endpoints do actuator e introduziu o Spring Boot Test.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2017</div>
+                <h2>Spring Boot 2.0</h2>
+                <p>Lançamento importante com suporte ao Java 8+, programação reativa e recursos de segurança
+                    aprimorados.
+                    Introduziu o Spring WebFlux para aplicações web reativas.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2018</div>
+                <h2>Spring Boot 2.1</h2>
+                <p>Adicionado suporte ao Java 11, tempo de inicialização melhorado e endpoints do actuator aprimorados
+                    para melhor monitoramento.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2019</div>
+                <h2>Spring Boot 2.2</h2>
+                <p>Adicionado suporte ao Java 13, tempo de inicialização melhorado e endpoints do actuator aprimorados
+                    para melhor monitoramento.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2020</div>
+                <h2>Spring Boot 2.4</h2>
+                <p>Introduziu JARs em camadas para melhor suporte a contêineres e melhorou o processamento de
+                    propriedades de configuração.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2021</div>
+                <h2>Spring Boot 2.5</h2>
+                <p>Adicionado suporte ao Java 16, suporte aprimorado ao Docker e coleta de métricas melhorada.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2022</div>
+                <h2>Spring Boot 3.0</h2>
+                <p>Lançamento importante com suporte ao Java 17+, compilação nativa com GraalVM e recursos de
+                    observabilidade aprimorados.</p>
+            </div>
+
+            <div class="timeline-item">
+                <div class="year">2023</div>
+                <h2>Spring Boot 3.1</h2>
+                <p>Adicionado suporte ao Java 20, melhorada a observabilidade com o Micrometer e suporte aprimorado ao
+                    Docker.</p>
+            </div>
+        </div>
+
+        <div class="highlight">
+            <h2>Principais Recursos e Impacto</h2>
+            <ul>
+                <li>Configuração automática: Configura automaticamente aplicações Spring com base nas dependências</li>
+                <li>Aplicações autônomas: Não há necessidade de contêineres de servlet externos</li>
+                <li>Recursos prontos para produção: Monitoramento, métricas e verificações de saúde integrados</li>
+                <li>Padrões opinativos: Reduz a complexidade da configuração</li>
+                <li>Servidores embutidos: Tomcat, Jetty ou Undertow incluídos por padrão</li>
+                <li>Spring Boot CLI: Interface de linha de comando para prototipagem rápida</li>
+                <li>Spring Boot Actuator: Recursos prontos para produção para monitoramento e gerenciamento</li>
+                <li>Spring Boot DevTools: Ferramentas de desenvolvimento para ciclos de desenvolvimento mais rápidos
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>O Spring Boot continua a evoluir e moldar o futuro do desenvolvimento em Java</p>
+            <p>© João Gabriel Abreu Macedo - 5o Semestre UniCEUB</p>
+            <a href="https://github.com/jgmacedo" style="color: white; font-weight: bold; text-decoration: none;">Meu
+                Clique aqui para acessar meu Github</a>
+        </div>
+    </footer>
+
+    <script>
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+
+        document.querySelectorAll('.timeline-item, .highlight').forEach(el => {
+            observer.observe(el);
+        });
+
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function scrollToBottom() {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+
+        function showModal(title, content) {
+            modalTitle.textContent = title;
+            modalContent.innerHTML = content;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+
+        document.querySelectorAll('.year').forEach(year => {
+            year.addEventListener('click', () => {
+                const title = year.parentElement.querySelector('h2').textContent;
+                const content = year.parentElement.querySelector('p').textContent;
+                showModal(title, content);
+            });
+        });
+
+
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'scale(1.02)';
+                item.style.transition = 'transform 0.3s ease';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'scale(1)';
+            });
+        });
+
+
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.header-bg').style.transform = `rotate(${scrolled * 3}deg)`;
+        });
+    </script>
+</body>
+
+</html>
